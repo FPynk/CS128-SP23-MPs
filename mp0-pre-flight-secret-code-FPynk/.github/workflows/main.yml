@@ -1,0 +1,26 @@
+name: Generate Secret
+
+on:
+  push:
+    paths:
+      - 'netid.txt'
+
+jobs:
+  secretGenerationPipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.x'
+
+      - name: run python script to generate secret
+        run: python ./.mp-system/secret.py
+
+      - name: commit changes
+        run: |
+          git config --global user.name 'Secret Generator'
+          git config --global user.email 'secret@illinois.edu'
+          git diff-index --quiet HEAD || (git commit -am "Update secret" && git push)
+
